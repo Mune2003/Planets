@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إلى أميرتي ونجمتي المضيئة</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap");
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        /* خلفية بنمط فيكتوري كلاسيكي راقي */
+        background-color: #f4eae1;
+        background-image:
+          radial-gradient(rgba(139, 94, 60, 0.15) 1px, transparent 0),
+          radial-gradient(rgba(139, 94, 60, 0.15) 1px, transparent 0);
+        background-size: 40px 40px;
+        background-position:
+          0 0,
+          20px 20px;
+        font-family: "Cairo", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow-x: hidden;
+        padding: 20px;
+      }
+
+      /* حاوية الظرف */
+      .envelope-wrapper {
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .envelope-wrapper:hover {
+        transform: scale(1.03);
+      }
+
+      /* تصميم الظرف الفيكتوري */
+      .envelope {
+        width: 350px;
+        height: 230px;
+        background: #d4a373;
+        position: relative;
+        border-radius: 4px;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 2px solid #bc8a5f;
+      }
+
+      .envelope::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 0;
+        height: 0;
+        border-left: 175px solid transparent;
+        border-right: 175px solid transparent;
+        border-top: 130px solid #c69465;
+        transform-origin: top;
+        transition: transform 0.4s ease 0.2s;
+        z-index: 3;
+      }
+
+      .envelope-text {
+        position: absolute;
+        color: #4a2c11;
+        font-size: 1.3rem;
+        font-weight: bold;
+        font-style: italic;
+        text-align: center;
+        z-index: 4;
+        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        pointer-events: none;
+      }
+
+      /* ورقة الرسالة بالداخل */
+      .letter {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        width: 90%;
+        max-width: 600px;
+        max-height: 85vh;
+        background: #fffdf9;
+        border: 8px double #8b5e3c;
+        padding: 30px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+        z-index: 10;
+        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow-y: auto;
+        display: none;
+      }
+
+      .letter.open {
+        display: block;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      /* خط مائل، واضح ومفهوم جداً */
+      .poetic-text {
+        font-family: "Playfair Display", "Cairo", serif;
+        font-style: italic;
+        font-size: 1.15rem;
+        color: #2c1a04;
+        line-height: 1.8;
+        text-align: center;
+        margin-bottom: 25px;
+        white-space: pre-line;
+      }
+
+      .poetic-text.ar {
+        font-family: "Cairo", sans-serif;
+        font-style: italic;
+        direction: rtl;
+      }
+
+      /* أزرار الترجمة والتحكم */
+      .btn-translate {
+        background-color: #8b5e3c;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+        border-radius: 20px;
+        cursor: pointer;
+        margin: 0 auto 20px auto;
+        display: block;
+        transition: background 0.3s;
+        font-weight: bold;
+      }
+
+      .btn-translate:hover {
+        background-color: #6a4425;
+      }
+
+      .question {
+        font-size: 1.25rem;
+        color: #8b5e3c;
+        text-align: center;
+        font-weight: bold;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      .buttons-container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        height: 50px;
+        position: relative;
+        align-items: center;
+      }
+
+      .btn-action {
+        padding: 10px 30px;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: transform 0.1s;
+      }
+
+      .btn-yes {
+        background-color: #4caf50;
+        color: white;
+        box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+      }
+
+      .btn-no {
+        background-color: #f44336;
+        color: white;
+        position: absolute;
+        box-shadow: 0 4px 10px rgba(244, 67, 54, 0.3);
+        transition: all 0.2s ease;
+      }
+
+      /* شاشة النتيجة عند الضغط على نعم */
+      .success-message {
+        display: none;
+        text-align: center;
+        color: #2e7d32;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 20px;
+        background: #e8f5e9;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px dashed #4caf50;
+      }
+
+      /* خلفية معتمة عند فتح الرسالة */
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 5;
+        display: none;
+      }
+
+      .overlay.show {
+        display: block;
+      }
+
+      /* البوب أب المخصص لـ بطلّي كدب */
+      .custom-alert {
+        position: fixed;
+        top: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #fff0f0;
+        color: #d32f2f;
+        border: 2px solid #f44336;
+        padding: 15px 35px;
+        border-radius: 30px;
+        font-weight: bold;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        z-index: 100;
+        transition: top 0.5s ease;
+        font-size: 1.1rem;
+        text-align: center;
+      }
+
+      .custom-alert.show {
+        top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- التنبيه الخاص بـ زر لا -->
+    <div class="custom-alert" id="customAlert">
+      بطلّي كدب.. إنتي بتحبيني! 🥺❤️
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- الظرف الفيكتوري الشيك -->
+    <div class="envelope-wrapper" id="envelopeWrapper">
+      <div class="envelope">
+        <div class="envelope-text">رسالة إلى وصية الرسول 📜🤍</div>
+      </div>
+    </div>
+
+    <!-- ورقة الرسالة بالداخل -->
+    <div class="letter" id="letter">
+      <button class="btn-translate" id="btnTranslate">ترجمة للعربية 🌍</button>
+
+      <div class="poetic-text" id="poeticText">
+        My Eternal Star, They say the universe is vast, but my love for you
+        expands infinitely faster. When the world falls into silence, I look up
+        at the moon and see the soft glow of your smile, and in the bright
+        stars, I see the light of your beautiful eyes. I love you so, so deeply.
+        I even named a star in the heavens after you, so the universe itself
+        knows you are my ultimate guide. Please, never let your heart be heavy
+        or sad because of my deep sleep. My body may rest, but my soul remains
+        awake, guarding you in my prayers. I pray to the Almighty to always
+        preserve your beautiful smile, to protect you from every harm, and to
+        write your name next to mine as my destiny forever, My Queen. I could
+        never bear to make you sad, not even for a single day. You are my
+        peaceful sanctuary.
+      </div>
+
+      <div class="question">
+        "هل متفرغة أننا نعيش ما تبقى من عمرنا مع بعض؟ 💍✨"
+      </div>
+
+      <div class="buttons-container">
+        <button class="btn-action btn-yes" id="btnYes">نعم</button>
+        <button class="btn-action btn-no" id="btnNo">لا</button>
+      </div>
+
+      <div class="success-message" id="successMessage">
+        يا رب تقبّل دعائي.. أدعو الله أن يحفظ ابتسامتكِ ويحميكِ ويكتبكِ من نصيبي
+        يا رب العالمين! 🤍💍 لقد جعلتِ كوني مضيئاً بنعم!
+      </div>
+    </div>
+
+    <script>
+      const envelopeWrapper = document.getElementById("envelopeWrapper");
+      const letter = document.getElementById("letter");
+      const overlay = document.getElementById("overlay");
+      const btnTranslate = document.getElementById("btnTranslate");
+      const poeticText = document.getElementById("poeticText");
+      const btnNo = document.getElementById("btnNo");
+      const btnYes = document.getElementById("btnYes");
+      const successMessage = document.getElementById("successMessage");
+      const customAlert = document.getElementById("customAlert");
+
+      let isEnglish = true;
+
+      const textEn = `My Eternal Star,
+
+They say the universe is vast, but my love for you expands infinitely faster. When the world falls into silence, I look up at the moon and see the soft glow of your smile, and in the bright stars, I see the light of your beautiful eyes. I love you so, so deeply. I even named a star in the heavens after you, so the universe itself knows you are my ultimate guide.
+
+Please, never let your heart be heavy or sad because of my deep sleep. My body may rest, but my soul remains awake, guarding you in my prayers. I pray to the Almighty to always preserve your beautiful smile, to protect you from every harm, and to write your name next to mine as my destiny forever, My Queen. I could never bear to make you sad, not even for a single day. You are my peaceful sanctuary.`;
+
+      const textAr = `نجمتي الأبدية،
+
+يقولون إن الكون واسع، لكن حبي لكِ يتمدد أضعافاً مضاعفة وبشكل أسرع بكثير. عندما يحل الصمت على العالم، أنظر إلى القمر فأرى وهج ابتسامتكِ الناعمة، وفي النجوم اللامعة أرى نور عينيكِ الجميلتين. أنا أحبكِ جداً جداً وبشكل أعمق مما تتخيلين.. حتى أنني سميتُ نجماً في السماء باسمكِ، ليعلم الكون نفسه أنكِ مرشدي وهدايَ الوحيد.
+
+أرجوكِ، لا تدعي الحزن يمس قلبكِ بسبب نومي. قد يرتاح جسدي، لكن روحي تظل مستيقظة تحرسكِ في دعواتي. أدعو الله العلي القدير أن يحفظ ابتسامتكِ الجميلة دائماً، وأن يحميكِ من كل سوء، وأن يكتبكِ من نصيبي وتكوني قدري وإلى جواري للأبد يا ملكتي. أنا لا أطيق ولا أتحمل أن أزعلكِ في يوم من الأيام، فأنتِ ملجئي وسلامي الخاص.`;
+
+      // فتح الظرف
+      envelopeWrapper.addEventListener("click", () => {
+        letter.classList.add("open");
+        overlay.classList.add("show");
+        envelopeWrapper.style.display = "none";
+      });
+
+      // إغلاق عند الضغط على الخلفية المعتمة
+      overlay.addEventListener("click", () => {
+        letter.classList.remove("open");
+        overlay.classList.remove("show");
+        envelopeWrapper.style.display = "flex";
+      });
+
+      // زر الترجمة
+      btnTranslate.addEventListener("click", () => {
+        if (isEnglish) {
+          poeticText.innerText = textAr;
+          poeticText.classList.add("ar");
+          btnTranslate.innerText = "Show English 🇬🇧";
+          isEnglish = false;
+        } else {
+          poeticText.innerText = textEn;
+          poeticText.classList.remove("ar");
+          btnTranslate.innerText = "ترجمة للعربية 🌍";
+          isEnglish = true;
+        }
+      });
+
+      // حركة هروب زر "لا" وإظهار بطلّي كدب
+      btnNo.addEventListener("mouseover", moveButton);
+      btnNo.addEventListener("click", (e) => {
+        e.preventDefault();
+        moveButton();
+      });
+
+      function moveButton() {
+        // توليد إحداثيات عشوائية تجعل الزر يهرب داخل حدود الحاوية
+        const container = document.querySelector(".buttons-container");
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+
+        // حساب المسافات المتاحة للحركة
+        const randomX =
+          Math.floor(Math.random() * (containerWidth - 80)) -
+          (containerWidth / 2 - 40);
+        const randomY =
+          Math.floor(Math.random() * (containerHeight - 30)) -
+          (containerHeight / 2 - 15);
+
+        btnNo.style.transform = `translate(${randomX}px, ${randomY}px)`;
+
+        // إظهار التنبيه اللطيف
+        customAlert.classList.add("show");
+        setTimeout(() => {
+          customAlert.classList.remove("show");
+        }, 2500);
+      }
+
+      // عند الضغط على زر نعم
+      btnYes.addEventListener("click", () => {
+        successMessage.style.display = "block";
+        btnNo.style.display = "none";
+        btnYes.style.display = "none";
+        document.querySelector(".question").style.display = "none";
+
+        // تأثير زينة بسيط وثابت
+        successMessage.scrollIntoView({ behavior: "smooth" });
+      });
+    </script>
+  </body>
+</html>
